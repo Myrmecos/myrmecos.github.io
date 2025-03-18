@@ -19,6 +19,10 @@ body {
   font-family: "Gill Sans", sans-serif;
 }
 
+a {
+  color: white;
+}
+
 /* below for sidebar formatting*/
 .sidebar {
     margin: 0;
@@ -71,8 +75,8 @@ body {
 
 /* below for main contents*/
 .content {
-  margin-left: 20%; /* Adjust as needed */
-  width: 80%; /* Ensure the content takes up the remaining width */
+  margin-left: 0%; /* Adjust as needed */
+  width: 84%; /* Ensure the content takes up the remaining width */
   height: 100vh; /* Use viewport height to ensure full height */
   /*background-image: url("../images/banana_minqing.jpg");*/
   background-size: cover; /* Ensures the image covers the entire area */
@@ -85,12 +89,18 @@ body {
   /* transform: scale(0.4); */
 }
 
+.feature {
+  display: block;
+  width: 100%;
+}
+
 .box {
   width: 80%;
   margin-top: 5%;
   margin-left: 10%;
   border-radius: 25px;
   background-color: #818181;
+  text-wrap: nowrap;
 }
 
 .homepage-title {
