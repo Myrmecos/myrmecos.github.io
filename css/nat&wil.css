@@ -23,61 +23,11 @@ a {
   color: white;
 }
 
-/* below for sidebar formatting*/
-.sidebar {
-    margin: 0;
-    padding: 0;
-    width: 16%;
-    top: 0%;
-    left: 0%;
-    background-color: #413d3d;
-    position: fixed;
-    height: 100%;
-    overflow: auto;
-    text-transform: uppercase;
-  }
-
-.avatar {
-  display: block;
-  margin-left: 10%;
-  margin-right: 10%;
-  margin-top: 10%;
-  margin-bottom: 10%;
-  width: 80%
-}
-
-  .sidebar a {
-    padding: 16px 16px;
-    text-decoration: none;
-    text-align: center;
-    color: #818181;
-    display: block;
-    transition: 0.3s;
-  }
-
-  .sidebar a.active {
-    background-color: #268f68;
-    color: white;
-  }
-  
-  .sidebar a:hover:not(.active) {
-    background-color: #555;
-    color: white;
-  }
-
-  .sidebar .closebtn {
-    position: absolute;
-    top: 0;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
-  }
-
 /* below for main contents*/
 .content {
-  margin-left: 0%; /* Adjust as needed */
-  width: 80%; /* Ensure the content takes up the remaining width */
-  height: 100vh; /* Use viewport height to ensure full height */
+  margin-left: 0px; /* Adjust as needed */
+  width: 100%vw; /* Ensure the content takes up the remaining width */
+  height: 100%vh; /* Use viewport height to ensure full height */
   /*background-image: url("../images/banana_minqing.jpg");*/
   background-size: cover; /* Ensures the image covers the entire area */
   background-position: center; /* Centers the image */
@@ -89,17 +39,35 @@ a {
   /* transform: scale(0.4); */
 }
 
-.animal-intro {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 25px;
-  padding: 20px;
-  border-width: 3px;
-  border-radius: 10px;
-  border-color: #413d3d;
-  border-style: solid;
+@media only screen and (min-width:501px) {
+  .animal-intro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 25px;
+    padding: 20px;
+    border-width: 3px;
+    border-radius: 10px;
+    border-color: #413d3d;
+    border-style: solid;
+  }
 }
+
+@media only screen and (max-width:500px) {
+  .animal-intro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0px;
+    padding: 0px;
+    border-width: 3px;
+    border-radius: 10px;
+    border-color: #413d3d;
+    border-style: solid;
+    width: 100%;
+  }
+}
+
 
 
 .feature {
@@ -113,51 +81,13 @@ a {
   margin-left: 10%;
   border-radius: 25px;
   background-color: #818181;
-  text-wrap: nowrap;
+  text-wrap: normal;
 }
 
-.homepage-title {
-  opacity: 100%;
-  color: white;
-  width: 60%;
-  left: 12%;
+h1 {
   text-align: center;
 }
 
-div.self-intro {
-  color: white;
-  border-radius: 25px;
-  padding: 20px;
-  width: 60%;
-  border-color:#616161;
-  border-width: 3px;
-  border-style: solid;
-  margin-left: 12%;
-  margin-bottom: 30px;
-}
-
-div.self-intro a {
-  color: white;
-}
-
-div.self-intro h1 {
-  font-size: 20px;
-}
-
-div.past-experience {
-  color: white;
-  border-radius: 25px;
-  padding: 20px;
-  width: 60%;
-  margin-left: 12%;
-  border-color: #616161;
-  border-width: 3px;
-  border-style: solid;
-}
-
-div.past-experience h1 {
-  font-size: 20px;
-}
 
 .creature {
   width: 50%;
