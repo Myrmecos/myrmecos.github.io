@@ -15,12 +15,12 @@ body {
 }
 
 body {
-  background-color: #818181;
+  background-color: #D6D6D6;
   font-family: "Gill Sans", sans-serif;
 }
 
 a {
-  color: white;
+  color: #313131;
 }
 
 /* below for sidebar formatting*/
@@ -50,13 +50,13 @@ a {
     padding: 16px 16px;
     text-decoration: none;
     text-align: center;
-    color: #818181;
+    color: #D6D6D6;
     display: block;
     transition: 0.3s;
   }
 
   .sidebar a.active {
-    background-color: #268f68;
+    background-color: #9cb0c3;
     color: white;
   }
   
@@ -75,7 +75,7 @@ a {
 
 /* below for main contents*/
 .content {
-  margin-left: 0%; /* Adjust as needed */
+  margin-left: 16%; /* Adjust as needed */
   width: 84%; /* Ensure the content takes up the remaining width */
   height: 100vh; /* Use viewport height to ensure full height */
   /*background-image: url("../images/banana_minqing.jpg");*/
@@ -95,24 +95,24 @@ a {
 }
 
 .box {
-  width: 80%;
+  /* width: 80%; */
   margin-top: 5%;
-  margin-left: 10%;
+  margin-left: 5%;
   border-radius: 25px;
-  background-color: #818181;
+  background-color: #D6D6D6;
   text-wrap: nowrap;
 }
 
 .homepage-title {
   opacity: 100%;
-  color: white;
+  color: #313131;
   width: 60%;
   left: 12%;
   text-align: center;
 }
 
 div.self-intro {
-  color: white;
+  color: #313131;
   border-radius: 25px;
   padding: 20px;
   width: 60%;
@@ -121,18 +121,31 @@ div.self-intro {
   border-style: solid;
   margin-left: 12%;
   margin-bottom: 30px;
+  white-space: pre-line;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+  line-height: 1.0;
 }
 
 div.self-intro a {
-  color: white;
+  color: #313131;
+  white-space: pre-line;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
 }
 
 div.self-intro h1 {
   font-size: 20px;
+  white-space: pre-line;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
 }
 
 div.past-experience {
-  color: white;
+  color: #313131;
   border-radius: 25px;
   padding: 20px;
   width: 60%;
@@ -140,6 +153,11 @@ div.past-experience {
   border-color: #616161;
   border-width: 3px;
   border-style: solid;
+  white-space: pre-line;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+  margin-bottom: 30px;
 }
 
 div.past-experience h1 {
