@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Config.yaml Generator</title>
+<title>config.json Generator</title>
 <style>
   :root {
     --bg: #0f172a;
@@ -141,8 +141,8 @@
 </head>
 <body>
 <div class="container">
-  <h1>Config.yaml Generator</h1>
-  <p class="subtitle">选择过滤条件 → 生成用于筛选文件的 config.yaml（全选则为 null）</p>
+  <h1>config.json Generator</h1>
+  <p class="subtitle">选择过滤条件 → 生成用于筛选文件的 config.json（全选则为 null）</p>
 
   <!-- Load data -->
   <div class="card">
@@ -230,7 +230,7 @@
       <div>总大小：<strong id="matchSize">—</strong></div>
     </div>
     <div class="actions">
-      <button class="btn btn-primary" onclick="generateAndDownload()">下载 config.yaml</button>
+      <button class="btn btn-primary" onclick="generateAndDownload()">下载 config.json</button>
       <button class="btn btn-secondary" onclick="updatePreview()">刷新预览</button>
     </div>
     <pre id="preview" style="margin-top:16px">请先选择条件并加载数据文件</pre>
