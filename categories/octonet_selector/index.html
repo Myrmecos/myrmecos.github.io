@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Config.yaml Generator</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --border: #334155;
+    --accent: #3b82f6;
+    --accent-hover: #2563eb;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --success: #22c55e;
+    --danger: #ef4444;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    padding: 24px;
+    min-height: 100vh;
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+  h1 { font-size: 1.75rem; margin-bottom: 8px; }
+  .subtitle { color: var(--muted); margin-bottom: 24px; font-size: 0.95rem; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .card h2 {
+    font-size: 1.1rem;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px 12px;
+  }
+  .checkbox-grid.user { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); }
+  .checkbox-grid.activity { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+  label.chk {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    user-select: none;
+  }
+  label.chk input { accent-color: var(--accent); width: 16px; height: 16px; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-secondary { background: #475569; color: white; }
+  .btn-secondary:hover { background: #64748b; }
+  .btn-danger { background: var(--danger); color: white; }
+  .btn-danger:hover { background: #dc2626; }
+  .btn-sm { padding: 5px 10px; font-size: 0.8rem; }
+  .range-box {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+  .range-box input[type="number"] {
+    width: 70px;
+    padding: 6px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #0f172a;
+    color: var(--text);
+    font-size: 0.9rem;
+  }
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    font-size: 1.05rem;
+  }
+  .stats strong { color: var(--success); }
+  .file-loader {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+  .file-loader input[type="file"] { color: var(--muted); }
+  .status { font-size: 0.9rem; color: var(--muted); }
+  .status.ok { color: var(--success); }
+  .status.err { color: var(--danger); }
+  pre#preview {
+    background: #0f172a;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    overflow-x: auto;
+    font-size: 0.85rem;
+    max-height: 280px;
+  }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+  .badge {
+    background: #334155;
+    color: var(--muted);
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+  .hint { font-size: 0.8rem; color: var(--muted); margin-left: 4px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Config.yaml Generator</h1>
+  <p class="subtitle">选择过滤条件 → 生成用于筛选文件的 config.yaml（全选则为 null）</p>
+
+  <!-- Load data -->
+  <div class="card">
+    <h2>1. 数据文件</h2>
+    <div class="file-loader">
+      <span class="status" id="loadStatus">正在加载 filename_filesize.txt…</span>
+    </div>
+  </div>
+
+  <!-- Node -->
+  <div class="card">
+    <div class="section-header">
+      <h2 style="margin:0">node_id</h2>
+      <button class="btn btn-secondary btn-sm" onclick="toggleAll('node', true)">全选</button>
+      <button class="btn btn-secondary btn-sm" onclick="toggleAll('node', false)">取消全选</button>
+    </div>
+    <div class="checkbox-grid" id="nodeGrid"></div>
+  </div>
+
+  <!-- Modality -->
+  <div class="card">
+    <div class="section-header">
+      <h2 style="margin:0">modality_id</h2>
+      <button class="btn btn-secondary btn-sm" onclick="toggleAll('modality', true)">全选</button>
+      <button class="btn btn-secondary btn-sm" onclick="toggleAll('modality', false)">取消全选</button>
+    </div>
+    <div class="checkbox-grid" id="modalityGrid"></div>
+  </div>
+
+  <!-- Scene -->
+  <div class="card">
+    <div class="section-header">
+      <h2 style="margin:0">scene_id (environmentID)</h2>
+      <button class="btn btn-secondary btn-sm" onclick="toggleAll('scene', true)">全选</button>
+      <button class="btn btn-secondary btn-sm" onclick="toggleAll('scene', false)">取消全选</button>
+    </div>
+    <div class="checkbox-grid" id="sceneGrid"></div>
+  </div>
+
+  <!-- User -->
+  <div class="card">
+    <div class="section-header">
+      <h2 style="margin:0">user_id</h2>
+      <button class="btn btn-secondary btn-sm" onclick="toggleAll('user', true)">全选</button>
+      <button class="btn btn-secondary btn-sm" onclick="toggleAll('user', false)">取消全选</button>
+      <span class="badge" id="userCountBadge"></span>
+    </div>
+    <div class="checkbox-grid user" id="userGrid"></div>
+    <div class="range-box">
+      <span>区间操作：</span>
+      <input type="number" id="userStart" min="1" max="42" value="1" placeholder="开始">
+      <span>–</span>
+      <input type="number" id="userEnd" min="1" max="42" value="10" placeholder="结束">
+      <button class="btn btn-primary btn-sm" onclick="applyUserRange(true)">全选区间</button>
+      <button class="btn btn-danger btn-sm" onclick="applyUserRange(false)">全取消区间</button>
+      <span class="hint">全选区间不会清除其他已选；全取消区间只影响该区间</span>
+    </div>
+  </div>
+
+  <!-- Activity -->
+  <div class="card">
+    <div class="section-header">
+      <h2 style="margin:0">activity_id</h2>
+      <button class="btn btn-secondary btn-sm" onclick="toggleAll('activity', true)">全选</button>
+      <button class="btn btn-secondary btn-sm" onclick="toggleAll('activity', false)">取消全选</button>
+      <span class="badge" id="activityCountBadge"></span>
+    </div>
+    <div class="checkbox-grid activity" id="activityGrid"></div>
+    <div class="range-box">
+      <span>按序号区间操作（1–<span id="activityMaxIdx"></span>）：</span>
+      <input type="number" id="activityStart" min="1" value="1" placeholder="开始">
+      <span>–</span>
+      <input type="number" id="activityEnd" min="1" value="10" placeholder="结束">
+      <button class="btn btn-primary btn-sm" onclick="applyActivityRange(true)">全选区间</button>
+      <button class="btn btn-danger btn-sm" onclick="applyActivityRange(false)">全取消区间</button>
+      <span class="hint">全选区间不会清除其他已选；全取消区间只影响该区间。序号与下方列表顺序一致</span>
+    </div>
+  </div>
+
+  <!-- Stats + Preview + Download -->
+  <div class="card">
+    <h2>匹配统计 & 生成</h2>
+    <div class="stats">
+      <div>匹配文件数：<strong id="matchCount">—</strong></div>
+      <div>总大小：<strong id="matchSize">—</strong></div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-primary" onclick="generateAndDownload()">下载 config.yaml</button>
+      <button class="btn btn-secondary" onclick="updatePreview()">刷新预览</button>
+    </div>
+    <pre id="preview" style="margin-top:16px">请先选择条件并加载数据文件</pre>
+  </div>
+</div>
+
+<script>
+const NODES = ["1","2","3","4","5","x"];
+const MODALITIES = ["acoustic","depthcam","heartrate","imu","ira","mmwave","mocapcsv","seekthermal","ToF","uwb","wifi"];
+const SCENES = ["1","2","3"];
+const USERS = Array.from({length:42}, (_,i) => String(i+1));
+const ACTIVITIES = [
+  "airdrum","answerphone","bicepcurl","blownose","bow","bowling","boxing","brushhair","brushteeth",
+  "clap","conversation","cough","dance","dodge","drawcircleclockwise","drawcirclecounterclockwise",
+  "drawtriangle","drawzigzag","drink","eat","falldown","freestyle","gym","handshake","handwave","hug",
+  "jog","jump","jumpingjack","jumprope","kicksomeone","legraise","liftupahand","lunge","makeoksign",
+  "makevictorysign","moppingfloor","pickup","playphone","pullhandin","punchsomeone","pushhandaway",
+  "pushsomeone","pushup","shakehead","sit","sleep","slide","sneeze","spreadandpinch","squat","stagger",
+  "stopsign","strechoneself","stretchoneself","sweep","tap","thumbdown","thumbup","touchface","turn",
+  "type","walk","wipeface","yawn"
+];
+
+let fileRecords = []; // {size, node, modality, scene, user, activity, raw}
+
+function buildCheckboxes(containerId, items, prefix, showIndex) {
+  const grid = document.getElementById(containerId);
+  grid.innerHTML = items.map((v, i) => `
+    <label class="chk">
+      <input type="checkbox" name="${prefix}" value="${v}" checked onchange="onSelectionChange()">
+      <span>${showIndex ? (i+1) + ". " : ""}${v}</span>
+    </label>
+  `).join("");
+}
+
+function toggleAll(prefix, checked) {
+  document.querySelectorAll(`input[name="${prefix}"]`).forEach(cb => {
+    cb.checked = checked;
+  });
+  onSelectionChange();
+}
+
+/** user range: select=true 只勾选区间内（不改区间外）；select=false 只取消区间内 */
+function applyUserRange(select) {
+  const start = parseInt(document.getElementById("userStart").value, 10);
+  const end = parseInt(document.getElementById("userEnd").value, 10);
+  if (isNaN(start) || isNaN(end) || start < 1 || end > 42 || start > end) {
+    alert("请输入有效的 user 区间（1–42，且开始 ≤ 结束）");
+    return;
+  }
+  document.querySelectorAll('input[name="user"]').forEach(cb => {
+    const v = parseInt(cb.value, 10);
+    if (v >= start && v <= end) {
+      cb.checked = select;
+    }
+    // 区间外保持原样
+  });
+  onSelectionChange();
+}
+
+/** activity range by 1-based index in ACTIVITIES list */
+function applyActivityRange(select) {
+  const max = ACTIVITIES.length;
+  const start = parseInt(document.getElementById("activityStart").value, 10);
+  const end = parseInt(document.getElementById("activityEnd").value, 10);
+  if (isNaN(start) || isNaN(end) || start < 1 || end > max || start > end) {
+    alert(`请输入有效的 activity 序号区间（1–${max}，且开始 ≤ 结束）`);
+    return;
+  }
+  const boxes = document.querySelectorAll('input[name="activity"]');
+  // boxes 顺序与 ACTIVITIES 一致
+  boxes.forEach((cb, idx) => {
+    const num = idx + 1; // 1-based
+    if (num >= start && num <= end) {
+      cb.checked = select;
+    }
+  });
+  onSelectionChange();
+}
+
+function getSelected(prefix, allValues) {
+  const checked = [...document.querySelectorAll(`input[name="${prefix}"]:checked`)].map(cb => cb.value);
+  if (checked.length === 0) return [];
+  if (checked.length === allValues.length) return null;
+  return checked;
+}
+
+function buildConfig() {
+  return {
+    node_id: getSelected("node", NODES),
+    modality_id: getSelected("modality", MODALITIES),
+    scene_id: getSelected("scene", SCENES),
+    user_id: getSelected("user", USERS),
+    activity_id: getSelected("activity", ACTIVITIES)
+  };
+}
+
+function matchesRecord(rec, cfg) {
+  if (cfg.node_id !== null && !cfg.node_id.includes(rec.node)) return false;
+  if (cfg.modality_id !== null && !cfg.modality_id.includes(rec.modality)) return false;
+  if (cfg.scene_id !== null && !cfg.scene_id.includes(rec.scene)) return false;
+  if (cfg.user_id !== null && !cfg.user_id.includes(rec.user)) return false;
+  if (cfg.activity_id !== null && !cfg.activity_id.includes(rec.activity)) return false;
+  return true;
+}
+
+function formatBytes(bytes) {
+  if (bytes === 0) return "0 B";
+  const units = ["B","KB","MB","GB","TB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  return (bytes / Math.pow(1024, i)).toFixed(2) + " " + units[i];
+}
+
+function updateCountBadges() {
+  const userChecked = document.querySelectorAll('input[name="user"]:checked').length;
+  document.getElementById("userCountBadge").textContent = `${userChecked}/${USERS.length}`;
+  const actChecked = document.querySelectorAll('input[name="activity"]:checked').length;
+  document.getElementById("activityCountBadge").textContent = `${actChecked}/${ACTIVITIES.length}`;
+}
+
+function onSelectionChange() {
+  updateCountBadges();
+  const cfg = buildConfig();
+
+  if (fileRecords.length === 0) {
+    document.getElementById("matchCount").textContent = "—";
+    document.getElementById("matchSize").textContent = "—";
+    updatePreview(cfg);
+    return;
+  }
+
+  let count = 0;
+  let totalSize = 0;
+  for (const rec of fileRecords) {
+    if (matchesRecord(rec, cfg)) {
+      count++;
+      totalSize += rec.size;
+    }
+  }
+  document.getElementById("matchCount").textContent = count.toLocaleString();
+  document.getElementById("matchSize").textContent = formatBytes(totalSize) + ` (${totalSize.toLocaleString()} bytes)`;
+  updatePreview(cfg);
+}
+
+function updatePreview(cfg) {
+  if (!cfg) cfg = buildConfig();
+  document.getElementById("preview").textContent = JSON.stringify(cfg, null, 4);
+}
+
+
+function generateAndDownload() {
+  const cfg = buildConfig();
+  const content = JSON.stringify(cfg, null, 4);
+  const blob = new Blob([content], { type: "application/x-yaml" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "config.json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function parseFilename(name) {
+  const base = name.replace(/\.zip$/i, "");
+  const parts = base.split("_");
+  if (parts.length < 7) return null;
+  return {
+    node: parts[0],
+    modality: parts[1],
+    scene: parts[2],
+    user: parts[3],
+    activity: parts[4],
+    trial: parts[5],
+    timestamp: parts[6]
+  };
+}
+
+// Auto-load filename_filesize.txt from the same directory
+async function autoLoadFile() {
+  const status = document.getElementById("loadStatus");
+  const fileUrl = "filename_filesize.txt";
+  try {
+    const res = await fetch(fileUrl);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const text = await res.text();
+    const lines = text.split(/\r?\n/).filter(l => l.trim());
+    fileRecords = [];
+    let bad = 0;
+    for (const line of lines) {
+      const spaceIdx = line.indexOf(" ");
+      if (spaceIdx === -1) { bad++; continue; }
+      const size = parseInt(line.slice(0, spaceIdx), 10);
+      const fname = line.slice(spaceIdx + 1).trim();
+      if (isNaN(size) || !fname) { bad++; continue; }
+      const parsed = parseFilename(fname);
+      if (!parsed) { bad++; continue; }
+      fileRecords.push({ size, ...parsed, raw: fname });
+    }
+    status.textContent = `已加载 ${fileRecords.length.toLocaleString()} 条记录` + (bad ? `（跳过 ${bad} 行）` : "");
+    status.className = "status ok";
+    onSelectionChange();
+  } catch (err) {
+    status.textContent = "加载失败：" + err.message + "（请确认 filename_filesize.txt 存在）";
+    status.className = "status err";
+  }
+}
+
+// Init
+buildCheckboxes("nodeGrid", NODES, "node", false);
+buildCheckboxes("modalityGrid", MODALITIES, "modality", false);
+buildCheckboxes("sceneGrid", SCENES, "scene", false);
+buildCheckboxes("userGrid", USERS, "user", false);
+buildCheckboxes("activityGrid", ACTIVITIES, "activity", true); // 显示序号方便区间选择
+document.getElementById("activityMaxIdx").textContent = ACTIVITIES.length;
+document.getElementById("activityEnd").max = ACTIVITIES.length;
+document.getElementById("activityEnd").value = Math.min(10, ACTIVITIES.length);
+updateCountBadges();
+updatePreview();
+autoLoadFile();
+</script>
+</body>
+</html>
