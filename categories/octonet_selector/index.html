@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +15,7 @@
     --muted: #94a3b8;
     --success: #22c55e;
     --danger: #ef4444;
+    --opt-off: #0f172a;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -25,7 +26,7 @@
     padding: 24px;
     min-height: 100vh;
   }
-  .container { max-width: 1100px; margin: 0 auto; }
+  .container { max-width: 1280px; margin: 0 auto; }
   h1 { font-size: 1.75rem; margin-bottom: 8px; }
   .subtitle { color: var(--muted); margin-bottom: 24px; font-size: 0.95rem; }
   .card {
@@ -49,22 +50,41 @@
     gap: 10px;
     margin-bottom: 12px;
   }
-  .checkbox-grid {
+  .section-header h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  .opt-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 8px 12px;
+    gap: 8px;
   }
-  .checkbox-grid.user { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); }
-  .checkbox-grid.activity { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
-  label.chk {
-    display: flex;
+  .opt-grid.user { grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); }
+  .opt-grid.activity { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+  .opt-btn {
+    display: inline-flex;
     align-items: center;
-    gap: 6px;
+    justify-content: center;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--opt-off);
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 500;
     cursor: pointer;
-    font-size: 0.9rem;
+    transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
     user-select: none;
   }
-  label.chk input { accent-color: var(--accent); width: 16px; height: 16px; }
+  .opt-btn:hover { border-color: #64748b; color: var(--text); }
+  .opt-btn.selected {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.35);
+  }
+  .opt-btn.selected:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
   .btn {
     display: inline-flex;
     align-items: center;
@@ -84,38 +104,6 @@
   .btn-danger { background: var(--danger); color: white; }
   .btn-danger:hover { background: #dc2626; }
   .btn-sm { padding: 5px 10px; font-size: 0.8rem; }
-  .range-box {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px;
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid var(--border);
-  }
-  .range-box input[type="number"] {
-    width: 70px;
-    padding: 6px 8px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    background: #0f172a;
-    color: var(--text);
-    font-size: 0.9rem;
-  }
-  .stats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 24px;
-    font-size: 1.05rem;
-  }
-  .stats strong { color: var(--success); }
-  .file-loader {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 12px;
-  }
-  .file-loader input[type="file"] { color: var(--muted); }
   .status { font-size: 0.9rem; color: var(--muted); }
   .status.ok { color: var(--success); }
   .status.err { color: var(--danger); }
@@ -123,12 +111,12 @@
     background: #0f172a;
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 16px;
-    overflow-x: auto;
-    font-size: 0.85rem;
-    max-height: 280px;
+    padding: 12px;
+    overflow: auto;
+    font-size: 0.8rem;
+    flex: 1;
+    min-height: 0;
   }
-  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
   .badge {
     background: #334155;
     color: var(--muted);
@@ -136,104 +124,400 @@
     padding: 2px 8px;
     border-radius: 999px;
   }
-  .hint { font-size: 0.8rem; color: var(--muted); margin-left: 4px; }
+  .hint { font-size: 0.78rem; color: var(--muted); line-height: 1.4; }
+
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .tab:hover { color: var(--text); border-color: #64748b; }
+  .tab.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .tab.active .badge {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+  }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .split-panel {
+    display: grid;
+    grid-template-columns: minmax(240px, 280px) 1fr;
+    gap: 16px;
+    min-height: 280px;
+  }
+  .range-pane {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    background: #162033;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .range-pane h4 { font-size: 0.9rem; font-weight: 600; }
+  .range-value {
+    font-size: 1.35rem;
+    font-variant-numeric: tabular-nums;
+    color: #fff;
+  }
+  .range-value span { color: var(--muted); font-size: 0.9rem; font-weight: 400; }
+  .range-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .options-pane {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    max-height: 340px;
+    overflow-y: auto;
+    background: #162033;
+  }
+
+  .dual-range {
+    position: relative;
+    height: 28px;
+    margin: 8px 0 4px;
+  }
+  .dual-range-rail {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 12px;
+    height: 6px;
+    border-radius: 999px;
+    background: #334155;
+  }
+  .dual-range-fill {
+    position: absolute;
+    top: 0;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--accent);
+  }
+  .dual-range input[type="range"] {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    top: 4px;
+    margin: 0;
+    appearance: none;
+    background: none;
+    pointer-events: none;
+    height: 20px;
+  }
+  .dual-range input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    pointer-events: auto;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid var(--accent);
+    cursor: grab;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.35);
+  }
+  .dual-range input[type="range"]::-moz-range-thumb {
+    pointer-events: auto;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid var(--accent);
+    cursor: grab;
+  }
+  .dual-range input[type="range"]::-webkit-slider-runnable-track {
+    background: transparent;
+    height: 6px;
+  }
+  .dual-range input[type="range"]::-moz-range-track {
+    background: transparent;
+    height: 6px;
+  }
+
+  .stats-card {
+    height: 380px;
+    display: flex;
+    flex-direction: column;
+  }
+  .stats-card > h2 { flex-shrink: 0; }
+  .stats-layout {
+    display: grid;
+    grid-template-columns: minmax(160px, 0.75fr) minmax(420px, 1.9fr) minmax(240px, 1fr);
+    gap: 16px;
+    flex: 1;
+    min-height: 0;
+  }
+  .stats-col {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    background: #162033;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .stats-col h3 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin-bottom: 12px;
+    flex-shrink: 0;
+  }
+  .stat-block { margin-bottom: 12px; }
+  .stat-label { font-size: 0.85rem; color: var(--muted); }
+  .stat-value {
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: var(--success);
+    font-variant-numeric: tabular-nums;
+    word-break: break-word;
+  }
+  .stat-sub { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+  .charts {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+  }
+  .chart-card h4 {
+    font-size: 0.75rem;
+    color: var(--text);
+    margin-bottom: 4px;
+    text-align: center;
+  }
+  .chart-svg { width: 100%; max-width: 108px; margin: 0 auto; display: block; }
+  .legend {
+    margin-top: 4px;
+    max-height: 78px;
+    overflow-y: auto;
+    font-size: 0.65rem;
+    color: var(--muted);
+  }
+  .legend-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 2px;
+  }
+  .swatch {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .legend-row span:last-child { margin-left: auto; }
+  .config-col { min-height: 0; }
+  .config-col .btn { flex-shrink: 0; margin-bottom: 10px; width: fit-content; }
+  .config-col pre { margin-bottom: 0; }
+  .empty-chart {
+    color: var(--muted);
+    font-size: 0.8rem;
+    text-align: center;
+    padding: 24px 8px;
+  }
+
+  @media (max-width: 1100px) {
+    .charts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media (max-width: 960px) {
+    .stats-layout, .split-panel {
+      grid-template-columns: 1fr;
+    }
+    .stats-layout { overflow: auto; }
+    .charts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .options-pane { max-height: 280px; }
+  }
 </style>
 </head>
 <body>
 <div class="container">
   <h1>config.json Generator</h1>
-  <p class="subtitle">选择过滤条件 → 生成用于筛选文件的 config.json</p>
+  <p class="subtitle">Choose filtering criteria, then generate config.json</p>
 
-  <!-- Load data -->
   <div class="card">
-    <h2>1. 数据文件</h2>
-    <div class="file-loader">
-      <span class="status" id="loadStatus">正在加载 filename_filesize.txt…</span>
+    <h2>1. Selection</h2>
+    <div class="tabs" role="tablist">
+      <button type="button" class="tab active" data-tab="node" onclick="switchTab('node')">
+        node_id <span class="badge" id="tabBadge-node"></span>
+      </button>
+      <button type="button" class="tab" data-tab="modality" onclick="switchTab('modality')">
+        modality_id <span class="badge" id="tabBadge-modality"></span>
+      </button>
+      <button type="button" class="tab" data-tab="scene" onclick="switchTab('scene')">
+        scene_id <span class="badge" id="tabBadge-scene"></span>
+      </button>
+      <button type="button" class="tab" data-tab="user" onclick="switchTab('user')">
+        user_id <span class="badge" id="tabBadge-user"></span>
+      </button>
+      <button type="button" class="tab" data-tab="activity" onclick="switchTab('activity')">
+        activity_id <span class="badge" id="tabBadge-activity"></span>
+      </button>
+    </div>
+
+    <div class="panel active" id="panel-node">
+      <div class="section-header">
+        <h3>node_id</h3>
+        <button class="btn btn-secondary btn-sm" onclick="toggleAll('node', true)">Select all</button>
+        <button class="btn btn-secondary btn-sm" onclick="toggleAll('node', false)">Deselect all</button>
+      </div>
+      <div class="opt-grid" id="nodeGrid"></div>
+    </div>
+
+    <div class="panel" id="panel-modality">
+      <div class="section-header">
+        <h3>modality_id</h3>
+        <button class="btn btn-secondary btn-sm" onclick="toggleAll('modality', true)">Select all</button>
+        <button class="btn btn-secondary btn-sm" onclick="toggleAll('modality', false)">Deselect all</button>
+      </div>
+      <div class="opt-grid" id="modalityGrid"></div>
+    </div>
+
+    <div class="panel" id="panel-scene">
+      <div class="section-header">
+        <h3>scene_id (environmentID)</h3>
+        <button class="btn btn-secondary btn-sm" onclick="toggleAll('scene', true)">Select all</button>
+        <button class="btn btn-secondary btn-sm" onclick="toggleAll('scene', false)">Deselect all</button>
+      </div>
+      <div class="opt-grid" id="sceneGrid"></div>
+    </div>
+
+    <div class="panel" id="panel-user">
+      <div class="section-header">
+        <h3>user_id</h3>
+        <button class="btn btn-secondary btn-sm" onclick="toggleAll('user', true)">Select all</button>
+        <button class="btn btn-secondary btn-sm" onclick="toggleAll('user', false)">Deselect all</button>
+        <span class="badge" id="userCountBadge"></span>
+      </div>
+      <div class="split-panel">
+        <div class="range-pane">
+          <h4>Range</h4>
+          <div class="range-value" id="userRangeLabel">1 – 10 <span>/ 42</span></div>
+          <div class="dual-range">
+            <div class="dual-range-rail"><div class="dual-range-fill" id="userRangeFill"></div></div>
+            <input type="range" id="userStart" min="1" max="42" value="1" aria-label="User range start" oninput="onRangeInput('user')">
+            <input type="range" id="userEnd" min="1" max="42" value="10" aria-label="User range end" oninput="onRangeInput('user')">
+          </div>
+          <div class="range-actions">
+            <button class="btn btn-primary btn-sm" onclick="applyUserRange(true)">Select range</button>
+            <button class="btn btn-danger btn-sm" onclick="applyUserRange(false)">Deselect range</button>
+          </div>
+          <p class="hint">Select range does not clear items outside the range. Deselect range only affects the range.</p>
+        </div>
+        <div class="options-pane">
+          <div class="opt-grid user" id="userGrid"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-activity">
+      <div class="section-header">
+        <h3>activity_id</h3>
+        <button class="btn btn-secondary btn-sm" onclick="toggleAll('activity', true)">Select all</button>
+        <button class="btn btn-secondary btn-sm" onclick="toggleAll('activity', false)">Deselect all</button>
+        <span class="badge" id="activityCountBadge"></span>
+      </div>
+      <div class="split-panel">
+        <div class="range-pane">
+          <h4>Index range</h4>
+          <div class="range-value" id="activityRangeLabel">1 – 10 <span></span></div>
+          <div class="dual-range">
+            <div class="dual-range-rail"><div class="dual-range-fill" id="activityRangeFill"></div></div>
+            <input type="range" id="activityStart" min="1" value="1" aria-label="Activity index start" oninput="onRangeInput('activity')">
+            <input type="range" id="activityEnd" min="1" value="10" aria-label="Activity index end" oninput="onRangeInput('activity')">
+          </div>
+          <div class="range-actions">
+            <button class="btn btn-primary btn-sm" onclick="applyActivityRange(true)">Select range</button>
+            <button class="btn btn-danger btn-sm" onclick="applyActivityRange(false)">Deselect range</button>
+          </div>
+          <p class="hint">Select range does not clear items outside the range. Deselect range only affects the range. Indices match the list order on the right.</p>
+        </div>
+        <div class="options-pane">
+          <div class="opt-grid activity" id="activityGrid"></div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Node -->
-  <div class="card">
-    <div class="section-header">
-      <h2 style="margin:0">node_id</h2>
-      <button class="btn btn-secondary btn-sm" onclick="toggleAll('node', true)">全选</button>
-      <button class="btn btn-secondary btn-sm" onclick="toggleAll('node', false)">取消全选</button>
+  <div class="card stats-card">
+    <h2>2. Match stats &amp; generate</h2>
+    <div class="stats-layout">
+      <div class="stats-col">
+        <h3>Totals</h3>
+        <div class="stat-block">
+          <div class="stat-label">In total</div>
+          <div class="stat-value" id="totalRecords">—</div>
+          <div class="stat-sub status" id="loadStatus">Loading filename_filesize.txt…</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-label">Matched files</div>
+          <div class="stat-value" id="matchCount">—</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-label">Total size</div>
+          <div class="stat-value" id="matchSize">—</div>
+          <div class="stat-sub" id="matchSizeBytes"></div>
+        </div>
+      </div>
+      <div class="stats-col">
+        <h3>Distribution</h3>
+        <div class="charts" id="charts">
+          <div class="chart-card">
+            <h4>Nodes</h4>
+            <svg class="chart-svg" id="pie-node" viewBox="0 0 100 100"></svg>
+            <div class="legend" id="legend-node"></div>
+          </div>
+          <div class="chart-card">
+            <h4>Modalities</h4>
+            <svg class="chart-svg" id="pie-modality" viewBox="0 0 100 100"></svg>
+            <div class="legend" id="legend-modality"></div>
+          </div>
+          <div class="chart-card">
+            <h4>Scenes</h4>
+            <svg class="chart-svg" id="pie-scene" viewBox="0 0 100 100"></svg>
+            <div class="legend" id="legend-scene"></div>
+          </div>
+          <div class="chart-card">
+            <h4>Users</h4>
+            <svg class="chart-svg" id="pie-user" viewBox="0 0 100 100"></svg>
+            <div class="legend" id="legend-user"></div>
+          </div>
+          <div class="chart-card">
+            <h4>Activities</h4>
+            <svg class="chart-svg" id="pie-activity" viewBox="0 0 100 100"></svg>
+            <div class="legend" id="legend-activity"></div>
+          </div>
+        </div>
+      </div>
+      <div class="stats-col config-col">
+        <h3>config.json</h3>
+        <button class="btn btn-primary" onclick="generateAndDownload()">Download config.json</button>
+        <pre id="preview">Select filters and load the data file</pre>
+      </div>
     </div>
-    <div class="checkbox-grid" id="nodeGrid"></div>
-  </div>
-
-  <!-- Modality -->
-  <div class="card">
-    <div class="section-header">
-      <h2 style="margin:0">modality_id</h2>
-      <button class="btn btn-secondary btn-sm" onclick="toggleAll('modality', true)">全选</button>
-      <button class="btn btn-secondary btn-sm" onclick="toggleAll('modality', false)">取消全选</button>
-    </div>
-    <div class="checkbox-grid" id="modalityGrid"></div>
-  </div>
-
-  <!-- Scene -->
-  <div class="card">
-    <div class="section-header">
-      <h2 style="margin:0">scene_id (environmentID)</h2>
-      <button class="btn btn-secondary btn-sm" onclick="toggleAll('scene', true)">全选</button>
-      <button class="btn btn-secondary btn-sm" onclick="toggleAll('scene', false)">取消全选</button>
-    </div>
-    <div class="checkbox-grid" id="sceneGrid"></div>
-  </div>
-
-  <!-- User -->
-  <div class="card">
-    <div class="section-header">
-      <h2 style="margin:0">user_id</h2>
-      <button class="btn btn-secondary btn-sm" onclick="toggleAll('user', true)">全选</button>
-      <button class="btn btn-secondary btn-sm" onclick="toggleAll('user', false)">取消全选</button>
-      <span class="badge" id="userCountBadge"></span>
-    </div>
-    <div class="checkbox-grid user" id="userGrid"></div>
-    <div class="range-box">
-      <span>区间操作：</span>
-      <input type="number" id="userStart" min="1" max="42" value="1" placeholder="开始">
-      <span>–</span>
-      <input type="number" id="userEnd" min="1" max="42" value="10" placeholder="结束">
-      <button class="btn btn-primary btn-sm" onclick="applyUserRange(true)">全选区间</button>
-      <button class="btn btn-danger btn-sm" onclick="applyUserRange(false)">全取消区间</button>
-      <span class="hint">全选区间不会清除其他已选；全取消区间只影响该区间</span>
-    </div>
-  </div>
-
-  <!-- Activity -->
-  <div class="card">
-    <div class="section-header">
-      <h2 style="margin:0">activity_id</h2>
-      <button class="btn btn-secondary btn-sm" onclick="toggleAll('activity', true)">全选</button>
-      <button class="btn btn-secondary btn-sm" onclick="toggleAll('activity', false)">取消全选</button>
-      <span class="badge" id="activityCountBadge"></span>
-    </div>
-    <div class="checkbox-grid activity" id="activityGrid"></div>
-    <div class="range-box">
-      <span>按序号区间操作（1–<span id="activityMaxIdx"></span>）：</span>
-      <input type="number" id="activityStart" min="1" value="1" placeholder="开始">
-      <span>–</span>
-      <input type="number" id="activityEnd" min="1" value="10" placeholder="结束">
-      <button class="btn btn-primary btn-sm" onclick="applyActivityRange(true)">全选区间</button>
-      <button class="btn btn-danger btn-sm" onclick="applyActivityRange(false)">全取消区间</button>
-      <span class="hint">全选区间不会清除其他已选；全取消区间只影响该区间。序号与下方列表顺序一致</span>
-    </div>
-  </div>
-
-  <!-- Stats + Preview + Download -->
-  <div class="card">
-    <h2>匹配统计 & 生成</h2>
-    <div class="stats">
-      <div>匹配文件数：<strong id="matchCount">—</strong></div>
-      <div>总大小：<strong id="matchSize">—</strong></div>
-    </div>
-    <div class="actions">
-      <button class="btn btn-primary" onclick="generateAndDownload()">下载 config.json</button>
-      <button class="btn btn-secondary" onclick="updatePreview()">刷新预览</button>
-    </div>
-    <pre id="preview" style="margin-top:16px">请先选择条件并加载数据文件</pre>
   </div>
 </div>
 
@@ -252,69 +536,124 @@ const ACTIVITIES = [
   "stopsign","strechoneself","stretchoneself","sweep","tap","thumbdown","thumbup","touchface","turn",
   "type","walk","wipeface","yawn"
 ];
+const ALL = { node: NODES, modality: MODALITIES, scene: SCENES, user: USERS, activity: ACTIVITIES };
+const PALETTE = ["#3b82f6","#22c55e","#eab308","#ef4444","#a855f7","#06b6d4","#f97316","#ec4899","#84cc16","#14b8a6","#6366f1","#f43f5e"];
 
-let fileRecords = []; // {size, node, modality, scene, user, activity, raw}
+let fileRecords = [];
+const selected = {
+  node: new Set(NODES),
+  modality: new Set(MODALITIES),
+  scene: new Set(SCENES),
+  user: new Set(USERS),
+  activity: new Set(ACTIVITIES)
+};
 
-function buildCheckboxes(containerId, items, prefix, showIndex) {
+function switchTab(name) {
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === name));
+  document.querySelectorAll(".panel").forEach(p => p.classList.toggle("active", p.id === "panel-" + name));
+}
+
+function buildButtons(containerId, items, prefix, showIndex) {
   const grid = document.getElementById(containerId);
   grid.innerHTML = items.map((v, i) => `
-    <label class="chk">
-      <input type="checkbox" name="${prefix}" value="${v}" checked onchange="onSelectionChange()">
-      <span>${showIndex ? (i+1) + ". " : ""}${v}</span>
-    </label>
+    <button type="button" class="opt-btn selected" data-group="${prefix}" data-value="${v}" onclick="toggleOption(this)">
+      ${showIndex ? (i + 1) + ". " : ""}${v}
+    </button>
   `).join("");
 }
 
+function toggleOption(btn) {
+  const group = btn.dataset.group;
+  const value = btn.dataset.value;
+  if (selected[group].has(value)) {
+    selected[group].delete(value);
+    btn.classList.remove("selected");
+  } else {
+    selected[group].add(value);
+    btn.classList.add("selected");
+  }
+  onSelectionChange();
+}
+
+function syncButtons(prefix) {
+  document.querySelectorAll(`.opt-btn[data-group="${prefix}"]`).forEach(btn => {
+    btn.classList.toggle("selected", selected[prefix].has(btn.dataset.value));
+  });
+}
+
 function toggleAll(prefix, checked) {
-  document.querySelectorAll(`input[name="${prefix}"]`).forEach(cb => {
-    cb.checked = checked;
-  });
+  if (checked) ALL[prefix].forEach(v => selected[prefix].add(v));
+  else selected[prefix].clear();
+  syncButtons(prefix);
   onSelectionChange();
 }
 
-/** user range: select=true 只勾选区间内（不改区间外）；select=false 只取消区间内 */
+function readRange(kind) {
+  const startEl = document.getElementById(kind + "Start");
+  const endEl = document.getElementById(kind + "End");
+  let start = parseInt(startEl.value, 10);
+  let end = parseInt(endEl.value, 10);
+  if (start > end) {
+    if (document.activeElement === startEl) startEl.value = end;
+    else endEl.value = start;
+    start = parseInt(startEl.value, 10);
+    end = parseInt(endEl.value, 10);
+  }
+  return { start, end, min: parseInt(startEl.min, 10), max: parseInt(startEl.max, 10) };
+}
+
+function updateRangeUI(kind) {
+  const { start, end, min, max } = readRange(kind);
+  const span = max - min;
+  const left = ((start - min) / span) * 100;
+  const right = ((end - min) / span) * 100;
+  document.getElementById(kind + "RangeFill").style.left = left + "%";
+  document.getElementById(kind + "RangeFill").style.width = (right - left) + "%";
+  const extra = kind === "user" ? " / 42" : " / " + ACTIVITIES.length;
+  document.getElementById(kind + "RangeLabel").innerHTML = `${start} – ${end} <span>${extra}</span>`;
+}
+
+function onRangeInput(kind) {
+  updateRangeUI(kind);
+  const startEl = document.getElementById(kind + "Start");
+  const endEl = document.getElementById(kind + "End");
+  const { min, max, start } = readRange(kind);
+  const mid = (min + max) / 2;
+  startEl.style.zIndex = start > mid ? "5" : "4";
+  endEl.style.zIndex = start > mid ? "3" : "5";
+}
+
 function applyUserRange(select) {
-  const start = parseInt(document.getElementById("userStart").value, 10);
-  const end = parseInt(document.getElementById("userEnd").value, 10);
-  if (isNaN(start) || isNaN(end) || start < 1 || end > 42 || start > end) {
-    alert("请输入有效的 user 区间（1–42，且开始 ≤ 结束）");
-    return;
-  }
-  document.querySelectorAll('input[name="user"]').forEach(cb => {
-    const v = parseInt(cb.value, 10);
-    if (v >= start && v <= end) {
-      cb.checked = select;
+  const { start, end } = readRange("user");
+  USERS.forEach(v => {
+    const n = parseInt(v, 10);
+    if (n >= start && n <= end) {
+      if (select) selected.user.add(v);
+      else selected.user.delete(v);
     }
-    // 区间外保持原样
   });
+  syncButtons("user");
   onSelectionChange();
 }
 
-/** activity range by 1-based index in ACTIVITIES list */
 function applyActivityRange(select) {
-  const max = ACTIVITIES.length;
-  const start = parseInt(document.getElementById("activityStart").value, 10);
-  const end = parseInt(document.getElementById("activityEnd").value, 10);
-  if (isNaN(start) || isNaN(end) || start < 1 || end > max || start > end) {
-    alert(`请输入有效的 activity 序号区间（1–${max}，且开始 ≤ 结束）`);
-    return;
-  }
-  const boxes = document.querySelectorAll('input[name="activity"]');
-  // boxes 顺序与 ACTIVITIES 一致
-  boxes.forEach((cb, idx) => {
-    const num = idx + 1; // 1-based
+  const { start, end } = readRange("activity");
+  ACTIVITIES.forEach((v, idx) => {
+    const num = idx + 1;
     if (num >= start && num <= end) {
-      cb.checked = select;
+      if (select) selected.activity.add(v);
+      else selected.activity.delete(v);
     }
   });
+  syncButtons("activity");
   onSelectionChange();
 }
 
 function getSelected(prefix, allValues) {
-  const checked = [...document.querySelectorAll(`input[name="${prefix}"]:checked`)].map(cb => cb.value);
-  if (checked.length === 0) return [];
-  if (checked.length === allValues.length) return null;
-  return checked;
+  const set = selected[prefix];
+  if (set.size === 0) return [];
+  if (set.size === allValues.length) return null;
+  return allValues.filter(v => set.has(v));
 }
 
 function buildConfig() {
@@ -344,10 +683,88 @@ function formatBytes(bytes) {
 }
 
 function updateCountBadges() {
-  const userChecked = document.querySelectorAll('input[name="user"]:checked').length;
-  document.getElementById("userCountBadge").textContent = `${userChecked}/${USERS.length}`;
-  const actChecked = document.querySelectorAll('input[name="activity"]:checked').length;
-  document.getElementById("activityCountBadge").textContent = `${actChecked}/${ACTIVITIES.length}`;
+  for (const key of Object.keys(ALL)) {
+    const n = selected[key].size;
+    const el = document.getElementById("tabBadge-" + key);
+    if (el) el.textContent = `${n}/${ALL[key].length}`;
+  }
+  document.getElementById("userCountBadge").textContent = `${selected.user.size}/${USERS.length}`;
+  document.getElementById("activityCountBadge").textContent = `${selected.activity.size}/${ACTIVITIES.length}`;
+}
+
+function polar(cx, cy, r, a) {
+  return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+}
+
+function donutSlice(cx, cy, rOut, rIn, a0, a1) {
+  const large = (a1 - a0) > Math.PI ? 1 : 0;
+  const [x0, y0] = polar(cx, cy, rOut, a0);
+  const [x1, y1] = polar(cx, cy, rOut, a1);
+  const [x2, y2] = polar(cx, cy, rIn, a1);
+  const [x3, y3] = polar(cx, cy, rIn, a0);
+  return `M ${x0} ${y0} A ${rOut} ${rOut} 0 ${large} 1 ${x1} ${y1} L ${x2} ${y2} A ${rIn} ${rIn} 0 ${large} 0 ${x3} ${y3} Z`;
+}
+
+function entriesFromCounts(countMap, maxSlices) {
+  const items = [...countMap.entries()].map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value);
+  if (items.length <= maxSlices) return items;
+  const head = items.slice(0, maxSlices - 1);
+  const rest = items.slice(maxSlices - 1).reduce((s, x) => s + x.value, 0);
+  head.push({ label: "Other", value: rest });
+  return head;
+}
+
+function renderPie(kind, countMap) {
+  const svg = document.getElementById("pie-" + kind);
+  const legend = document.getElementById("legend-" + kind);
+  const total = [...countMap.values()].reduce((s, v) => s + v, 0);
+  svg.innerHTML = "";
+  if (!total) {
+    legend.innerHTML = `<div class="empty-chart">No matches</div>`;
+    svg.innerHTML = `<circle cx="50" cy="50" r="34" fill="none" stroke="#334155" stroke-width="12"/>`;
+    return;
+  }
+  const slices = entriesFromCounts(countMap, 10);
+  const cx = 50, cy = 50, rOut = 40, rIn = 24;
+  let angle = -Math.PI / 2;
+  if (slices.length === 1) {
+    svg.innerHTML = `<circle cx="${cx}" cy="${cy}" r="${(rOut+rIn)/2}" fill="none" stroke="${PALETTE[0]}" stroke-width="${rOut-rIn}"/>`;
+  } else {
+    slices.forEach((s, i) => {
+      const sweep = (s.value / total) * 2 * Math.PI;
+      const a1 = angle + sweep;
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", donutSlice(cx, cy, rOut, rIn, angle, a1));
+      path.setAttribute("fill", PALETTE[i % PALETTE.length]);
+      svg.appendChild(path);
+      angle = a1;
+    });
+  }
+  legend.innerHTML = slices.map((s, i) => `
+    <div class="legend-row">
+      <i class="swatch" style="background:${PALETTE[i % PALETTE.length]}"></i>
+      <span>${s.label}</span>
+      <span>${s.value.toLocaleString()}</span>
+    </div>
+  `).join("");
+}
+
+function updateCharts(matched) {
+  const keys = [
+    ["node", "node"],
+    ["modality", "modality"],
+    ["scene", "scene"],
+    ["user", "user"],
+    ["activity", "activity"]
+  ];
+  for (const [kind, recKey] of keys) {
+    const map = new Map();
+    for (const rec of matched) {
+      map.set(rec[recKey], (map.get(rec[recKey]) || 0) + 1);
+    }
+    renderPie(kind, map);
+  }
 }
 
 function onSelectionChange() {
@@ -357,20 +774,24 @@ function onSelectionChange() {
   if (fileRecords.length === 0) {
     document.getElementById("matchCount").textContent = "—";
     document.getElementById("matchSize").textContent = "—";
+    document.getElementById("matchSizeBytes").textContent = "";
+    updateCharts([]);
     updatePreview(cfg);
     return;
   }
 
-  let count = 0;
+  const matched = [];
   let totalSize = 0;
   for (const rec of fileRecords) {
     if (matchesRecord(rec, cfg)) {
-      count++;
+      matched.push(rec);
       totalSize += rec.size;
     }
   }
-  document.getElementById("matchCount").textContent = count.toLocaleString();
-  document.getElementById("matchSize").textContent = formatBytes(totalSize) + ` (${totalSize.toLocaleString()} bytes)`;
+  document.getElementById("matchCount").textContent = matched.length.toLocaleString();
+  document.getElementById("matchSize").textContent = formatBytes(totalSize);
+  document.getElementById("matchSizeBytes").textContent = totalSize.toLocaleString() + " bytes";
+  updateCharts(matched);
   updatePreview(cfg);
 }
 
@@ -379,11 +800,10 @@ function updatePreview(cfg) {
   document.getElementById("preview").textContent = JSON.stringify(cfg, null, 4);
 }
 
-
 function generateAndDownload() {
   const cfg = buildConfig();
   const content = JSON.stringify(cfg, null, 4);
-  const blob = new Blob([content], { type: "application/x-yaml" });
+  const blob = new Blob([content], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -409,12 +829,10 @@ function parseFilename(name) {
   };
 }
 
-// Auto-load filename_filesize.txt from the same directory
 async function autoLoadFile() {
   const status = document.getElementById("loadStatus");
-  const fileUrl = "filename_filesize.txt";
   try {
-    const res = await fetch(fileUrl);
+    const res = await fetch("filename_filesize.txt");
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const text = await res.text();
     const lines = text.split(/\r?\n/).filter(l => l.trim());
@@ -430,26 +848,32 @@ async function autoLoadFile() {
       if (!parsed) { bad++; continue; }
       fileRecords.push({ size, ...parsed, raw: fname });
     }
-    status.textContent = `已加载 ${fileRecords.length.toLocaleString()} 条记录` + (bad ? `（跳过 ${bad} 行）` : "");
-    status.className = "status ok";
+    document.getElementById("totalRecords").textContent = fileRecords.length.toLocaleString();
+    status.textContent = bad ? `records (skipped ${bad} lines)` : "records";
+    status.className = "stat-sub status ok";
     onSelectionChange();
   } catch (err) {
-    status.textContent = "加载失败：" + err.message + "（请确认 filename_filesize.txt 存在）";
-    status.className = "status err";
+    document.getElementById("totalRecords").textContent = "—";
+    status.textContent = "Failed to load: " + err.message;
+    status.className = "stat-sub status err";
   }
 }
 
-// Init
-buildCheckboxes("nodeGrid", NODES, "node", false);
-buildCheckboxes("modalityGrid", MODALITIES, "modality", false);
-buildCheckboxes("sceneGrid", SCENES, "scene", false);
-buildCheckboxes("userGrid", USERS, "user", false);
-buildCheckboxes("activityGrid", ACTIVITIES, "activity", true); // 显示序号方便区间选择
-document.getElementById("activityMaxIdx").textContent = ACTIVITIES.length;
-document.getElementById("activityEnd").max = ACTIVITIES.length;
-document.getElementById("activityEnd").value = Math.min(10, ACTIVITIES.length);
+buildButtons("nodeGrid", NODES, "node", false);
+buildButtons("modalityGrid", MODALITIES, "modality", false);
+buildButtons("sceneGrid", SCENES, "scene", false);
+buildButtons("userGrid", USERS, "user", false);
+buildButtons("activityGrid", ACTIVITIES, "activity", true);
+
+const actMax = ACTIVITIES.length;
+document.getElementById("activityStart").max = actMax;
+document.getElementById("activityEnd").max = actMax;
+document.getElementById("activityEnd").value = Math.min(10, actMax);
+updateRangeUI("user");
+updateRangeUI("activity");
 updateCountBadges();
 updatePreview();
+updateCharts([]);
 autoLoadFile();
 </script>
 </body>
